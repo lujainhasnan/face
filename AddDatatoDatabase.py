@@ -5,7 +5,7 @@ from firebase_admin import db
 # Initialize the Firebase app
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred,{
-    'databaseURL':"https://facetest-f8bfd-default-rtdb.firebaseio.com/"
+    'databaseURL':"https://mawjudfirebase-default-rtdb.firebaseio.com/"
 
 })
 
