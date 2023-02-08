@@ -13,7 +13,7 @@ from datetime import datetime
 # Initialize the Firebase app
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred, {
-    'databaseURL': "https://facetest-f8bfd-default-rtdb.firebaseio.com/",
+    'databaseURL':"https://mawjudfirebase-default-rtdb.firebaseio.com/",
     'storageBucket': "mawjudfirebase.appspot.com"
 })
 
@@ -84,4 +84,7 @@ while True:
                 # Add the name of the detected person
                 name = studentNames[id]
                 ref.child(id).update({"name": name})
+                
+                cv2.imshow(" webcam ", img)
+                cv2.waitKey(1)
 
