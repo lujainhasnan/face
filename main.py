@@ -1,5 +1,4 @@
 import cv2
-import os
 import pickle
 import face_recognition
 import cvzone
@@ -8,15 +7,14 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 from firebase_admin import storage
-from datetime import datetime
+
 
 # Initialize the Firebase app
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred, {
-    'databaseURL':"https://mawjudfirebase-default-rtdb.firebaseio.com/",
-    'storageBucket':"mawjudfirebase.appspot.com"
+    'databaseURL': "https://mawjudfirebase-default-rtdb.firebaseio.com/",
+    'storageBucket': "mawjudfirebase.appspot.com"
 })
-
 
 # Reference to the database
 ref = db.reference()
@@ -49,7 +47,6 @@ while True:
     faceCurFrame = face_recognition.face_locations(imgS)
     encodeCurFrame = face_recognition.face_encodings(imgS, faceCurFrame)
 
-
     # Compare the current frame's encodings with the known encodings
     if faceCurFrame:
         for encodeFace, faceLoc in zip(encodeCurFrame, faceCurFrame):
@@ -67,33 +64,17 @@ while True:
 
                 # Mark the student as present
                 id = studentIds[matchIndex]
-
-                #ref.child(id).update({"present": True})
-                
                 if counter == 0:
                     cvzone.putTextRect(img, "Loading", (275, 400))
-                    cv2.imshow("Face Attendance", img)
-                    cv2.waitKey(1)
                     counter = 1
 
+        if counter != 0:
 
-                if counter != 0:
+            if counter == 1:
+            # Get the Data
+               studentInfo = db.reference(f'Students/{id}').get()
+               ref = db.reference(f'Students/{id}')
+               ref.child('attendance').set('present')
 
-                    if counter == 1:
-                        # Get the Data
-                        studentInfo = db.reference(f'Students/{id}').get()
-                        print(studentInfo)
-
-
-
-    else:
-                # No faces found, update all students as absent
-      for id in studentIds:
-        ref.child(id).update({"present": False})
-
-    cv2.imshow(" webcam ", img)
-    cv2.waitKey(1)
-
-
-
-
+               cv2.imshow(" webcam ", img)
+               cv2.waitKey(1)
