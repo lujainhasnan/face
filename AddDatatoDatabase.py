@@ -17,22 +17,21 @@ data = {
         {
             "name": "lujain Hassan",
             "ID": 439010,
-            "present":True,
-
+            "attendance":'Absent'
 
         },
     "439012":
         {
             "name": "lama mmm",
             "ID": 439012,
-            "present":True,
+            "attendance":'Absent'
 
         },
     "439013":
         {
             "name": "fatimah has",
             "ID": 439013,
-            "present":True,
+            "attendance":'Absent'
 
         }
 }
