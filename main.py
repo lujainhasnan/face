@@ -73,16 +73,15 @@ while True:
                     counter = 1
 
         if counter != 0:
-            # Replace '60014' with the ID of the course
-            # Replace 'material_docmin' with the ID of the material
-            # Replace 'Students' with the ID of the collection containing the students
-            course_ref = db.collection('Courses').document('60014').collection('Students').document(id)
-            course_ref.update({'attendance': 'present'})
+            if counter == 1:
 
-            counter = 0
+               course_ref = db.collection('Courses').document('60014').collection('Students').document(id)
+               course_ref.update({'attendance': 'present'})
 
-        else:
-            counter = 0
 
-        cv2.imshow("Face Attendance", img)
-        cv2.waitKey(1)
+
+    else:
+        counter = 0
+
+    cv2.imshow("Face Attendance", img)
+    cv2.waitKey(1)
