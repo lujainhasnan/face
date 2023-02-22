@@ -4,15 +4,20 @@ import pickle
 import os
 import firebase_admin
 from firebase_admin import credentials
-from firebase_admin import db
 from firebase_admin import storage
+from firebase_admin import firestore
 
 # Initialize Firebase
+# Initialize the Firebase app
 cred = credentials.Certificate("serviceAccountKey.json")
-firebase_admin.initialize_app(cred ,{
-    'databaseURL': "https://mawjudfirebase-default-rtdb.firebaseio.com/",
+firebase_admin.initialize_app(cred, {
     'storageBucket': "mawjudfirebase.appspot.com"
-})
+}
+)
+
+# Reference to the database
+db = firestore.client()
+bucket = storage.bucket()
 
 # Importing student images #  Load student images and get student IDs
 folderPath = 'Student'
