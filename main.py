@@ -5,20 +5,22 @@ import cvzone
 import numpy as np
 import firebase_admin
 from firebase_admin import credentials
-from firebase_admin import db
 from firebase_admin import storage
+from firebase_admin import firestore
+
 
 
 # Initialize the Firebase app
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred, {
-    'databaseURL': "https://mawjudfirebase-default-rtdb.firebaseio.com/",
     'storageBucket': "mawjudfirebase.appspot.com"
-})
+}
+)
 
 # Reference to the database
-ref = db.reference()
+db = firestore.client()
 bucket = storage.bucket()
+
 
 # Open the camera
 cap = cv2.VideoCapture(0)
@@ -61,21 +63,26 @@ while True:
                 y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
                 bbox = 55 + x1, 162 + y1, x2 - x1, y2 - y1
                 img = cvzone.cornerRect(img, bbox, rt=0)
-                cv2.imshow(" webcam ", img)
-                cv2.waitKey(1)
 
                 # Mark the student as present
                 id = studentIds[matchIndex]
                 if counter == 0:
                     cvzone.putTextRect(img, "Loading", (275, 400))
+                    cv2.imshow("Face Attendance", img)
+                    cv2.waitKey(1)
                     counter = 1
 
         if counter != 0:
+            # Replace '60014' with the ID of the course
+            # Replace 'material_docmin' with the ID of the material
+            # Replace 'Students' with the ID of the collection containing the students
+            course_ref = db.collection('Courses').document('60014').collection('Students').document(id)
+            course_ref.update({'attendance': 'present'})
 
-            if counter == 1:
-            # Get the Data
-               studentInfo = db.reference(f'Students/{id}').get()
-               ref = db.reference(f'Students/{id}')
-               ref.child('attendance').set('present')
+            counter = 0
 
-               
+        else:
+            counter = 0
+
+        cv2.imshow("Face Attendance", img)
+        cv2.waitKey(1)
