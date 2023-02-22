@@ -61,13 +61,13 @@ while True:
                 # To locate the face
                 y1, x2, y2, x1 = faceLoc
                 y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
-                bbox = 55 + x1, 162 + y1, x2 - x1, y2 - y1
+                bbox = 55 + x1, 20 + y1, x2 - x1, y2 - y1
                 img = cvzone.cornerRect(img, bbox, rt=0)
 
                 # Mark the student as present
                 id = studentIds[matchIndex]
                 if counter == 0:
-                    cvzone.putTextRect(img, "Loading", (275, 400))
+                    cvzone.putTextRect(img, "Loading", (220, 200))
                     cv2.imshow("Face Attendance", img)
                     cv2.waitKey(1)
                     counter = 1
