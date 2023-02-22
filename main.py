@@ -4,23 +4,21 @@ import face_recognition
 import cvzone
 import numpy as np
 import firebase_admin
+import time
 from firebase_admin import credentials
 from firebase_admin import storage
 from firebase_admin import firestore
-
 
 
 # Initialize the Firebase app
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred, {
     'storageBucket': "mawjudfirebase.appspot.com"
-}
-)
+})
 
 # Reference to the database
 db = firestore.client()
 bucket = storage.bucket()
-
 
 # Open the camera
 cap = cv2.VideoCapture(0)
@@ -38,6 +36,7 @@ print("Encode File Loaded")
 
 counter = 0
 id = -1
+imgStudent = []
 
 while True:
     success, img = cap.read()
@@ -72,13 +71,22 @@ while True:
                     cv2.waitKey(1)
                     counter = 1
 
-        if counter != 0:
-            if counter == 1:
+                    # Get the Data
+                    course_ref = db.collection('Courses').document('60014').collection('Students').document(id)
 
-               course_ref = db.collection('Courses').document('60014').collection('Students').document(id)
-               course_ref.update({'attendance': 'present'})
+                    # Get the Image from the storage
+                    blob = bucket.get_blob(f'Student/{id}.jpg')
+                    array = np.frombuffer(blob.download_as_string(), np.uint8)
+                    imgStudent = cv2.imdecode(array, cv2.COLOR_BGRA2BGR)
 
+                    # Update data of attendance
+                    course_ref.update({'attendance': 'present'})
 
+                    # Wait for 2 seconds
+                    time.sleep(7)
+
+                    # Delete the "present" word from attendance
+                    course_ref.update({'attendance': ''})
 
     else:
         counter = 0
