@@ -20,14 +20,6 @@ firebase_admin.initialize_app(cred, {
 db = firestore.client()
 bucket = storage.bucket()
 
-# the course name or ID
-course_name = input("Enter the course name or ID: ")
-
-# Check if the course exist
-if not db.collection('Courses').document(course_name).get().exists:
-    print(f"Error: Course {course_name} does not exist.")
-    exit()
-
 # Open the camera
 cap = cv2.VideoCapture(0)
 cap.set(3, 640)
@@ -80,7 +72,11 @@ while True:
                     counter = 1
 
                     # Get the Data
-                    course_ref = db.collection('Courses').document(course_name).collection('Students').document(id)
+
+                    current_course_ref = db.collection('currentCourse').document('dJnBjGDTmBKfW7N4ltCB').get()
+                    if current_course_ref.exists:
+                        course_id = current_course_ref.to_dict()['courseId']
+                    course_ref = db.collection('Courses').document(course_id).collection('Students').document(id)
 
                     # Get the Image from the storage
                     blob = bucket.get_blob(f'Student/{id}.jpg')
@@ -91,7 +87,7 @@ while True:
                     course_ref.update({'attendance': 'present'})
 
                     # Wait for 2 seconds
-                    time.sleep(10)
+                    time.sleep(7)
 
                     # Delete the "present" word from attendance
                     course_ref.update({'attendance': ''})
