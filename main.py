@@ -37,7 +37,7 @@ print("Encode File Loaded")
 counter = 0
 id = -1
 imgStudent = []
-
+total_days = 0
 while True:
     success, img = cap.read()
     # Resize the image for faster processing
@@ -49,6 +49,7 @@ while True:
     encodeCurFrame = face_recognition.face_encodings(imgS, faceCurFrame)
 
     # Compare the current frame's encodings with the known encodings
+
     if faceCurFrame:
         for encodeFace, faceLoc in zip(encodeCurFrame, faceCurFrame):
             matches = face_recognition.compare_faces(encodeListKnown, encodeFace)
@@ -71,26 +72,30 @@ while True:
                     cv2.waitKey(1)
                     counter = 1
 
-                    # Get the Data
+        if counter != 0:
 
-                    current_course_ref = db.collection('currentCourse').document('dJnBjGDTmBKfW7N4ltCB').get()
-                    if current_course_ref.exists:
-                        course_id = current_course_ref.to_dict()['courseId']
-                    course_ref = db.collection('Courses').document(course_id).collection('Students').document(id)
+            if counter == 1:
+               # Get the Data
+               current_course_ref = db.collection('currentCourse').document('dJnBjGDTmBKfW7N4ltCB').get()
+               if current_course_ref.exists:
+                  course_id = current_course_ref.to_dict()['courseId']
+               course_ref = db.collection('Courses').document(course_id).collection('Students').document(id)
 
-                    # Get the Image from the storage
-                    blob = bucket.get_blob(f'Student/{id}.jpg')
-                    array = np.frombuffer(blob.download_as_string(), np.uint8)
-                    imgStudent = cv2.imdecode(array, cv2.COLOR_BGRA2BGR)
+               # Get the Image from the storage
+               blob = bucket.get_blob(f'Student/{id}.jpg')
+               array = np.frombuffer(blob.download_as_string(), np.uint8)
+               imgStudent = cv2.imdecode(array, cv2.COLOR_BGRA2BGR)
 
-                    # Update data of attendance
-                    course_ref.update({'attendance': 'present'})
+               # Update data of attendance
+               course_ref.update({'attendance': 'present'})
 
-                    # Wait for 2 seconds
-                    time.sleep(7)
+               # Wait for 7 seconds
+               time.sleep(7)
 
-                    # Delete the "present" word from attendance
-                    course_ref.update({'attendance': ''})
+               # Delete the "present" word from attendance
+               course_ref.update({'attendance': ''})
+               course_ref.update({'total_days': firestore.Increment(1)})
+
 
     else:
         counter = 0
