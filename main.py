@@ -21,7 +21,7 @@ db = firestore.client()
 bucket = storage.bucket()
 
 # Open the camera
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 cap.set(3, 640)
 cap.set(4, 480)
 
@@ -37,7 +37,7 @@ print("Encode File Loaded")
 counter = 0
 id = -1
 imgStudent = []
-total_days = 0
+
 while True:
     success, img = cap.read()
     # Resize the image for faster processing
@@ -66,6 +66,7 @@ while True:
 
                 # Mark the student as present
                 id = studentIds[matchIndex]
+
                 if counter == 0:
                     cvzone.putTextRect(img, "Loading", (220, 200))
                     cv2.imshow("Face Attendance", img)
@@ -88,13 +89,15 @@ while True:
 
                # Update data of attendance
                course_ref.update({'attendance': 'present'})
+               course_ref.update({'total_days': firestore.Increment(1)})
 
-               # Wait for 7 seconds
-               time.sleep(7)
+
+               # Wait for 3 seconds
+               time.sleep(3)
 
                # Delete the "present" word from attendance
                course_ref.update({'attendance': ''})
-               course_ref.update({'total_days': firestore.Increment(1)})
+
 
 
     else:
